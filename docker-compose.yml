@@ -61,7 +61,8 @@ services:
     container_name: phpmyadmin
     environment:
       - PMA_HOST=mysql
-      - PMA_USER=user
+      - MYSQL_ROOT_PASSWORD
+      - PMA_USER=root
       - PMA_PASSWORD=secret
       - UPLOAD_LIMIT=64M
     restart: always
