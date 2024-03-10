@@ -11,17 +11,16 @@ class PostController extends Controller
     {
         $posts = Post::all();
         // $res='fff';
-        foreach ($posts as $post) {
+        // foreach ($posts as $post) {
 
-            dump($post->title, $post->content);
-        }
-        // dd('end');
+        //     dump($post->title, $post->content);
+        // }
+        return view('posts', ['posts' =>$posts ]);
+        // dd($posts);
     }
 
     public function create()
     {
-
-
         $postsArr =  [
             [
                 'title' => 'Название поста1', // Пример: Заголовок поста
@@ -61,4 +60,6 @@ class PostController extends Controller
         // dd($post->title);
         dd('deleted');
     }
+
+
 }
