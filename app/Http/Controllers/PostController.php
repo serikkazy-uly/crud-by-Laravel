@@ -10,56 +10,66 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        // $res='fff';
-        // foreach ($posts as $post) {
 
-        //     dump($post->title, $post->content);
-        // }
-        return view('posts', ['posts' =>$posts ]);
+        return view('post.index', ['posts' => $posts]);
         // dd($posts);
     }
 
     public function create()
     {
-        $postsArr =  [
-            [
-                'title' => 'Название поста1', // Пример: Заголовок поста
-                'content' => 'Текст поста', // Пример: Содержимое поста
-                'image' => 'url_изображения', // Пример: Ссылка на изображение
-                'likes' => 0, // Изначально количество лайков равно 0   
-            ]
-        ];
+        return view('post.create');
+    }
 
-        foreach ($postsArr as $item) {
-            // dd($item);
-            Post::create($item);
-        }
-        dd('created');
+
+    public function store()
+    {
+        $data = request()->validate([
+            'title' => 'string',
+            'content' => 'string',
+            'image' => 'string',
+        ]);
+        // dd($data);
+        $post = Post::create($data);
+        return redirect()->route('post.index');
+    }
+
+
+    public function show(Post $post)
+    {
+        // $post = Post::findOrFail($id);
+        // dd($post->title);
+        return view('post.show', ['post'=>$post]);
+    }
+    public function edit(Post $post)
+    {
+        // dd($post->title);
+        return view('post.edit', ['post' => $post]);
     }
 
 
 
-    public function update()
+    public function update(Post $post)
     {
-        $post = Post::find(2);
-        // dd($post->title);
-
-        $post->update([
-            'title' => 'updated', // Пример: Заголовок поста
-            'content' => 'updated', // Пример: Содержимое поста
-            'image' => 'updated', // Пример: Ссылка на изображение
-            'likes' => 1, // Изначально количество лайков равно 0 
+        $data = request()->validate([
+            'title' => 'string', 
+            'content' => 'string', 
+            'image' => 'string',
         ]);
-        dd('updated');
+        $post->update($data);
+        return redirect()->route('post.show', $post->id);
     }
 
     public function delete()
     {
-        $post=Post::find(1);// withTrashed()->find(1) - восстановление
+        $post = Post::find(1); // withTrashed()->find(1) - восстановление
         $post->delete(); // restore()
         // dd($post->title);
         dd('deleted');
     }
 
 
+    public function destroy(Post $post){
+        $post->delete(); 
+        return redirect()->route('post.index');
+    }
 }
