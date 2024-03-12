@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\PostTag;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 
@@ -12,28 +13,33 @@ class PostController extends Controller
     public function index()
     {
 
-        // $post = Post::find(1);
-        $tag = Tag::find(1);
-
-        // dd($post->tags);
-        dd($tag->posts);
+        $posts = Post::all();
+        return view('post.index', ['posts' => $posts]);
     }
 
     public function create()
     {
-        return view('post.create');
+        $categories = Category::all();
+        $tags = Tag::all();
+        return view('post.create',  ['categories' => $categories], ['tags' => $tags]);
     }
 
 
     public function store()
     {
         $data = request()->validate([
-            'title' => 'string',
+            'title' => 'required|string',
             'content' => 'string',
             'image' => 'string',
+            'category_id' => '',
+            'tags' => '',
         ]);
-        // dd($data);
+        $tags=$data['tags'];
+        unset($data['tags']);
+        // dd($tags, $data);
         $post = Post::create($data);
+        $post->tags()->attach( $tags);
+
         return redirect()->route('post.index');
     }
 
@@ -47,7 +53,10 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         // dd($post->title);
-        return view('post.edit', ['post' => $post]);
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return view('post.edit', ['post' => $post, 'categories' => $categories,'tags' => $tags]);
     }
 
 
@@ -58,8 +67,15 @@ class PostController extends Controller
             'title' => 'string',
             'content' => 'string',
             'image' => 'string',
+            'category_id' => '',
+            'tags' => '',
+
         ]);
+        $tags=$data['tags'];
+        unset($data['tags']);
+
         $post->update($data);
+        $post->tags()->sync($tags);
         return redirect()->route('post.show', $post->id);
     }
 
