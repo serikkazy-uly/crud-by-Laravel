@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -9,10 +10,13 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::all();
-
-        return view('post.index', ['posts' => $posts]);
-        // dd($posts);
+        // $posts = Post::all();
+        $category = Category::find(2);
+        $post = Post::find(1);
+        
+        dd($category->posts);
+        dd($post->category);
+        // return view('post.index', ['posts' => $posts]);
     }
 
     public function create()
@@ -38,7 +42,7 @@ class PostController extends Controller
     {
         // $post = Post::findOrFail($id);
         // dd($post->title);
-        return view('post.show', ['post'=>$post]);
+        return view('post.show', ['post' => $post]);
     }
     public function edit(Post $post)
     {
@@ -51,8 +55,8 @@ class PostController extends Controller
     public function update(Post $post)
     {
         $data = request()->validate([
-            'title' => 'string', 
-            'content' => 'string', 
+            'title' => 'string',
+            'content' => 'string',
             'image' => 'string',
         ]);
         $post->update($data);
@@ -68,8 +72,9 @@ class PostController extends Controller
     }
 
 
-    public function destroy(Post $post){
-        $post->delete(); 
+    public function destroy(Post $post)
+    {
+        $post->delete();
         return redirect()->route('post.index');
     }
 }
